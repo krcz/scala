@@ -8,6 +8,19 @@ trait BankAccount {
 }
 
 object Bank {
-  def openAccount(): BankAccount = ???
+  def openAccount(): BankAccount = new BankAccount {
+    private var balance: Option[Int] = Some(0)
+
+    override def closeAccount() = synchronized {
+      balance = None
+    }
+
+    override def getBalance = synchronized { balance }
+
+    override def incrementBalance(increment: Int) = synchronized {
+      balance = balance.map(_ + increment)
+      balance
+    }
+  }
 }
 
