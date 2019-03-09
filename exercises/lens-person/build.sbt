@@ -10,3 +10,5 @@ libraryDependencies ++= Seq(
 
 libraryDependencies += "org.scalaz" %% "scalaz-core" % "7.2.6"
 
+
+excludeFilter := HiddenFileFilter || "example*"

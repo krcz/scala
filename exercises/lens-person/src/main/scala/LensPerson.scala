@@ -19,12 +19,26 @@ object LensPerson {
 
   // Implement these.
 
-  val bornStreet: Born => String = ???
+  val bornStreet: Born => String = _._bornAt._street
 
-  val setCurrentStreet: String => Person => Person = ???
+  val setCurrentStreet: String => Person => Person = { street => person =>
+    person.copy(_address = person._address.copy(_street = street))
+  }
 
-  val setBirthMonth: Int => Person => Person = ???
+  val setBirthMonth: Int => Person => Person = { month => person =>
+    def fixDate(epochDay: EpochDay): EpochDay = {
+      val localDate = LocalDate.ofEpochDay(epochDay)
+      LocalDate.of(localDate.getYear, month, localDate.getDayOfMonth).toEpochDay
+    }
+
+    person.copy(_born = person._born.copy(_bornOn = fixDate(person._born._bornOn)))
+  }
 
   // Transform both birth and current street names.
-  val renameStreets: (String => String) => Person => Person = ???
+
+  val renameStreets: (String => String) => Person => Person = { streetTransform => person =>
+    def addressTransform(address: Address) = address.copy(_street = streetTransform(address._street))
+    def bornTransform(born: Born) = born.copy(_bornAt = addressTransform(born._bornAt))
+    person.copy(_address = addressTransform(person._address), _born = bornTransform(person._born))
+  }
 }
